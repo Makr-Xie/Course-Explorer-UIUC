@@ -1,0 +1,1 @@
+# Initializes Flask app and connects website components
