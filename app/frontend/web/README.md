@@ -28,3 +28,13 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+# Added Eslint, Pretier, and Husky.
+
+To ensure adherence to coding standards and maintain a clean code format, our project incorporates ESLint and Prettier for code style linting, alongside Husky to enforce these checks before code is pushed to the repository.
+
+- [Eslint Doc](https://eslint.org/docs/latest/use/getting-started)
+- [Prettier Doc](https://prettier.io/docs/en/install)
+- [Husky Doc](https://typicode.github.io/husky/get-started.html)
+  Feel free change the build log in the .husky/pre-commit. XD
+  The one I pushed is a little bit aggressive.
