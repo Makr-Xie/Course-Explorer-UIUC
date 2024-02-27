@@ -1,0 +1,7 @@
+/build
+/out
+/public
+/_static
+/node_modules/**
+/env
+/scripts
