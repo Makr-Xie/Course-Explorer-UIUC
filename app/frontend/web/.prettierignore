@@ -5,3 +5,14 @@ node_modules
 public
 env
 buildspec.yml
+/.eslintrc.cjs
+/.eslintrc.json
+/.prettierrc
+/jest.config.ts
+/lint-staged.config.js
+/README.md
+/tsconfig.json
+/tsconfig.node.json
+/src/vite-env.d.ts
+/vite.config.ts
+/pnpm-lock.yaml

@@ -38,3 +38,14 @@ To ensure adherence to coding standards and maintain a clean code format, our pr
 - [Husky Doc](https://typicode.github.io/husky/get-started.html)
   Feel free change the build log in the .husky/pre-commit. XD
   The one I pushed is a little bit aggressive.
+- [React Doc](https://react.dev/) !!Important. 
+
+## Added React Router to setup pages
+All web pages are under ./src/pages directory. The sub route is defined in the App.tsx file. 
+[React Router documentation](https://reactrouter.com/en/main)
+
+## Added Jest with TypeScript support
+1. Added jest.config.ts file. 
+2. Added ./src/setupTests.ts.
+3. Write a text.tsx to test the first group of tests. Checking render effect and TS type schjecks. 
+[Jest documentation](https://jestjs.io/docs/getting-started)

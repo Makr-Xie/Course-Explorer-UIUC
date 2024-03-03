@@ -3,6 +3,13 @@ cd app/frontend/web
 
 echo '🏗️👷 Styling, testing and building your project before committing'
 
+# Check if tests pass
+pnpm test ||
+(
+    echo 'Testing failed. Fix the tests and try to commit again.'
+        false;
+)
+
 # Check Prettier standards
 pnpm run check-format ||
 (
