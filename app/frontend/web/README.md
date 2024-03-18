@@ -49,3 +49,6 @@ All web pages are under ./src/pages directory. The sub route is defined in the A
 2. Added ./src/setupTests.ts.
 3. Write a text.tsx to test the first group of tests. Checking render effect and TS type schjecks. 
 [Jest documentation](https://jestjs.io/docs/getting-started)
+
+## Added TailwindCSS for UI development
+ - [TailwindCSS Doc](https://tailwindcss.com/docs/guides/vite)

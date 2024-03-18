@@ -16,3 +16,5 @@
 /src/vite-env.d.ts
 /vite.config.ts
 /pnpm-lock.yaml
+/tailwind.config.js
+/postcss.config.js
