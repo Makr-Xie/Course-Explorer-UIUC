@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { DemoGenEds } from "../utils/demodata";
 
 const GenEdsTypes = [
   { label: "Advanced Composition", value: "ADV_COMP" },
@@ -8,52 +10,8 @@ const GenEdsTypes = [
   { label: "Humanities & The Arts", value: "HUM_ARTS" },
 ];
 
-const DemoGenEds = [
-  {
-    courseCode: "MUS133",
-    courseName: "Intro to World Music",
-    genEd: "HUM_ARTS",
-    hours: 3,
-    gpa: 3.73,
-  },
-  {
-    courseCode: "REL104",
-    courseName: "Introduction to Asian Mythology",
-    genEd: "W_C_C",
-    hours: 3,
-    gpa: 2.22,
-  },
-  {
-    courseCode: "MUS133",
-    courseName: "Intro to World Music",
-    genEd: "HUM_ARTS",
-    hours: 3,
-    gpa: 1.11,
-  },
-  {
-    courseCode: "REL104",
-    courseName: "Introduction to Asian Mythology",
-    genEd: "W_C_C",
-    hours: 3,
-    gpa: 2.22,
-  },
-  {
-    courseCode: "MUS133",
-    courseName: "Intro to World Music",
-    genEd: "HUM_ARTS",
-    hours: 3,
-    gpa: 3.73,
-  },
-  {
-    courseCode: "REL104",
-    courseName: "Introduction to Asian Mythology",
-    genEd: "W_C_C",
-    hours: 3,
-    gpa: 2.22,
-  },
-];
-
 const GenEdsPage: React.FC = () => {
+  const navigate = useNavigate();
   const [genEdType, setGenEdType] = useState("All");
   const [genEds, setGenEds] = useState(DemoGenEds);
 
@@ -64,6 +22,10 @@ const GenEdsPage: React.FC = () => {
       setGenEds(DemoGenEds.filter((genEd) => genEd.genEd === genEdType));
     }
   }, [genEdType]);
+
+  const handleNavCourse = (courseCode: string) => {
+    navigate(`/course?course=${courseCode.toLowerCase()}`);
+  };
 
   return (
     <div className="h-screen w-full overflow-hidden bg-black">
@@ -88,6 +50,7 @@ const GenEdsPage: React.FC = () => {
               <button
                 key={index}
                 className="w-full bg-gray-700 hover:bg-gray-500 p-4 rounded-lg flex flex-row justify-between items-center"
+                onClick={() => handleNavCourse(genEd.courseCode)}
               >
                 <p className="text-white">
                   {genEd.courseCode} - {genEd.courseName}
