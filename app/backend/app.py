@@ -27,7 +27,16 @@ def index():
 ## Right Now it will return the first 10 courses
 @app.route('/courses', methods=['GET'])
 def get_courses():
-    courses_cursor = allCourses.find().limit(10)
+    course_subject = request.args.get('course_subject', None)
+    
+    if course_subject:
+        # Use a case-insensitive search to find courses matching the course name
+        query = {"name": {"$regex": course_subject, "$options": "i"}}
+    else:
+        # No course name provided, no specific query
+        query = {}
+
+    courses_cursor = allCourses.find(query).limit(10)
     courses_list = list(courses_cursor)
     for course in courses_list:
         course['_id'] = str(course['_id'])
