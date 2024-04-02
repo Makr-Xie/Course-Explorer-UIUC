@@ -1,1 +1,4 @@
 # All Python dependencies go here
+flask
+flask_cors
+pandas
