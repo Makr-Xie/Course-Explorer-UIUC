@@ -2,7 +2,7 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { DemoGenEds, DemoDescription } from "../utils/demodata";
 import NavBar from "../components/NavBar";
-import SearchBar from "../components/SearchBar";
+// import SearchBar from "../components/SearchBar";
 
 const CoursePage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -17,9 +17,7 @@ const CoursePage: React.FC = () => {
     <div className="h-screen w-full overflow-hidden bg-black">
       <NavBar />
       <div className="h-4/5 grid grid-cols-12 gap-y-4 px-8">
-        <div className="col-span-4 h-auto my-8">
-          <SearchBar />
-        </div>
+        <div className="col-span-4 h-auto my-8">{/* <SearchBar /> */}</div>
         <div className="col-span-12 mt-8 flex flex-col justify-start items-center">
           <div className="w-full bg-gray-700 py-4 px-8 rounded-lg flex flex-row justify-between items-center">
             <p className="text-white text-xl font-bold">
