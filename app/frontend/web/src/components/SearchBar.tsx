@@ -25,7 +25,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ queryValue, setQueryValue }) => {
       <input
         type="text"
         className="font-bold text-xl bg-transparent focus:outline-none"
-        placeholder="Search for a course..."
+        placeholder="Course code or name"
         value={String(queryValue)}
         onChange={(e) => setQueryValue(e.target.value)}
       />

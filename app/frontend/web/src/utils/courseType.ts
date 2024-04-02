@@ -7,11 +7,11 @@ export type Course = {
   "Professor Rating": number;
 };
 
-export type GenEdCoourse = Course & {
-  ACP: string;
-  CS: string;
-  HUM: string;
-  NAT: string;
-  QR: string;
-  SBS: string;
+export type GenEdCourse = Course & {
+  ACP: "" | "ACP";
+  CS: "" | "WCC" | "NW" | "US";
+  HUM: "" | "LA" | "HP";
+  NAT: "SS" | "BS" | "";
+  QR: "QR1" | "QR2" | "";
+  SBS: "LS" | "PS" | "";
 };

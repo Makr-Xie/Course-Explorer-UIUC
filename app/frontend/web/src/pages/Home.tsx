@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
 
     const fetchCourseData = async (query: string) => {
       const res = await fetch(
-        import.meta.env.SERVER_LINK + `/api/courses?query=${query}`,
+        import.meta.env.VITE_SERVER_LINK + `/courses?course_subject=${query}`,
       );
       const data = await res.json();
       setCourses(data);
@@ -27,9 +27,7 @@ const HomePage: React.FC = () => {
     <div className="h-screen w-full overflow-hidden bg-black">
       <NavBar />
       <div className="h-4/5 flex flex-col justify-center items-center gap-y-4">
-        <h1 className="text-white text-2xl font-bold mt-12">
-          UIUC Course Explorer
-        </h1>
+        <h1 className="text-white text-2xl font-bold">UIUC Course Explorer</h1>
         <div className="w-full flex flex-row items-center justify-center gap-x-6">
           <SearchBar queryValue={search} setQueryValue={setSearch} />
           <button
