@@ -15,13 +15,13 @@ const CSsubtype = [
 ];
 
 const SBSsubtype = [
-  { label: "Life Science", value: "LS" },
-  { label: "Physical Science", value: "PS" },
+  { label: "Social Science", value: "SS" },
+  { label: "Behavioral Science", value: "BS" },
 ];
 
 const NATsubtype = [
-  { label: "Social Science", value: "SS" },
-  { label: "Behavioral Science", value: "BS" },
+  { label: "Life Science", value: "LS" },
+  { label: "Physical Science", value: "PS" },
 ];
 
 const QRsubtype = [

@@ -36,7 +36,9 @@ const CourseTables: React.FC<CourseTablesProps> = ({ courses }) => {
           <button
             key={index}
             className="w-full bg-gray-700 hover:bg-gray-500 p-4 rounded-lg flex flex-row justify-between items-center"
-            onClick={() => handleNavCourse(String(course.Course))}
+            onClick={() =>
+              handleNavCourse(String(course.Subject + " " + course.Course))
+            }
           >
             <p className="text-white">
               {course.Subject} {course.Course} - {course["Course Title"]}
