@@ -65,7 +65,6 @@ def get_geneds():
 
     for course in courses_list:
         course['_id'] = str(course['_id'])
-
     return jsonify(courses_list)
 
 
