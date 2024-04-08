@@ -31,7 +31,7 @@ def get_courses():
     
     if course_subject:
         # Use a case-insensitive search to find courses matching the course name
-        query = {"name": {"$regex": course_subject, "$options": "i"}}
+        query = {"Subject": {"$regex": course_subject, "$options": "i"}}
     else:
         # No course name provided, no specific query
         query = {}
