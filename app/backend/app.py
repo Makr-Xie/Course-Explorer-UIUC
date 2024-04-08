@@ -31,7 +31,7 @@ def get_courses():
     
     if course_subject:
         # Use a case-insensitive search to find courses matching the course name
-        query = {"name": {"$regex": course_subject, "$options": "i"}}
+        query = {"Subject": {"$regex": course_subject, "$options": "i"}}
     else:
         # No course name provided, no specific query
         query = {}
@@ -47,8 +47,22 @@ def get_courses():
 ## Right Now it will return the first 10 courses
 @app.route('/geneds', methods= ['GET'])
 def get_geneds():
-    courses_cursor = geneds.find().limit(10)
+    gened_type = request.args.get('type', None) # Major type (e.g., ACP, CS)
+    gened_subtype = request.args.get('subtype', None)
+
+    if gened_type and gened_subtype:
+        # Filter by specific subtype value within the major type
+        query = {gened_type: gened_subtype}
+    elif gened_type:
+        # Filter by any non-empty value in the major type
+        query = {gened_type: {"$ne": ""}}
+    else:
+        # No filtering if no major type is specified
+        query = {}
+
+    courses_cursor = geneds.find(query).limit(10)
     courses_list = list(courses_cursor)
+
     for course in courses_list:
         course['_id'] = str(course['_id'])
     return jsonify(courses_list)

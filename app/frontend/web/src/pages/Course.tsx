@@ -11,6 +11,13 @@ const CoursePage: React.FC = () => {
     (genEd) => genEd.courseCode.toLowerCase() === searchParams.get("course"),
   );
 
+  // useEffect(() => {
+  //   fetch(`/courses/${searchParams.get("course")}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //     });
+
   // const [sections, setSections] = useState([]);
 
   return (
