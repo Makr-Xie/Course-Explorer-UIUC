@@ -3,6 +3,25 @@ import NavBar from "../components/NavBar";
 import { GenEdCourse } from "../utils/courseType";
 import CourseTables from "../components/CourseTables";
 
+type GenEdType = {
+  label: string;
+  value: string;
+  subtype: Array<{ label: string; value: string }>;
+};
+
+type Selection = {
+  type: string;
+  subtype?: string;
+};
+
+const constructPayload = (selections: Selection[]): Record<string, string> => {
+  const payload: Record<string, string> = {};
+  selections.forEach((selection) => {
+    payload[selection.type] = selection.subtype || "all"; // Use "all" or "" if no subtype
+  });
+  return payload;
+};
+
 const HUMsubtype = [
   { label: "Literature & the Arts", value: "LA" },
   { label: "Historical & Philosophical Perspectives", value: "HP" },
@@ -29,7 +48,7 @@ const QRsubtype = [
   { label: "QR2", value: "QR2" },
 ];
 
-const GenEdsTypes = [
+const GenEdsTypes: GenEdType[] = [
   { label: "Advanced Composition", value: "ACP", subtype: [] },
   { label: "Humanities and the Arts", value: "HUM", subtype: HUMsubtype },
   {
@@ -47,90 +66,110 @@ const GenEdsTypes = [
 ];
 
 const GenEdsPage: React.FC = () => {
-  const [genEdType, setGenEdType] = useState("All");
-  const [genEdSubType, setGenEdSubType] = useState("All");
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selections, setSelections] = useState<Selection[]>([]);
   const [genEds, setGenEds] = useState<GenEdCourse[]>([]);
 
   useEffect(() => {
-    const fetchGenEds = async (genedType: string, genedSubType: string) => {
-      let url = "";
-      if (genedType === "" && genedSubType === "") {
-        url = `/geneds`;
-      } else if (genedSubType === "") {
-        url = `/geneds?type=${genedType}`;
-      } else {
-        url = `/geneds?type=${genedType}&subtype=${genedSubType}`;
+    const fetchGenEds = async (selections: Selection[]) => {
+      const url = new URL(import.meta.env.VITE_SERVER_LINK + "/geneds");
+      const payload = constructPayload(selections);
+      console.log(payload);
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        console.log(data);
+        setGenEds(data);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
       }
-      const res = await fetch(import.meta.env.VITE_SERVER_LINK + url);
-      const data = await res.json();
-      console.log(data);
-      setGenEds(data);
     };
-    console.log(genEdType, genEdSubType);
-    if (genEdType === "All" && genEdSubType === "All") {
-      fetchGenEds("", "");
-    } else if (genEdSubType === "All") {
-      fetchGenEds(genEdType, "");
-    } else {
-      fetchGenEds(genEdType, genEdSubType);
-    }
-  }, [genEdType, genEdSubType]);
+    console.log(selections);
+    fetchGenEds(selections);
+  }, [selections]);
 
   const handleClickType = (type: string) => {
-    if (type === genEdType) {
-      setGenEdType("All");
-      setGenEdSubType("All");
-      return;
-    } else if (type === "ACP") {
-      setGenEdType("ACP");
-      setGenEdSubType("ACP");
-      return;
+    setSelectedType(type);
+    const index = selections.findIndex((s) => s.type === type);
+    if (index === -1) {
+      // Add new type if not already in the selections
+      if (type === "ACP") {
+        setSelections((prev) => [...prev, { type, subtype: "ACP" }]);
+      } else {
+        setSelections((prev) => [...prev, { type }]);
+      }
     }
-    setGenEdType(type);
-    setGenEdSubType("All");
   };
 
   const handleClickSubType = (subtype: string) => {
-    if (subtype === genEdSubType) {
-      setGenEdSubType("All");
-      return;
-    }
-    setGenEdSubType(subtype);
+    const type = selectedType;
+    if (!type) return;
+    const newSelection: Selection = { type, subtype };
+    // Add or update the selection
+    setSelections((prev) => {
+      const existingIndex = prev.findIndex((s) => s.type === type);
+      if (existingIndex !== -1) {
+        const newSelections = [...prev];
+        newSelections[existingIndex] = newSelection; // Replace existing type with new subtype
+        return newSelections;
+      } else {
+        return [...prev, newSelection]; // Add new selection
+      }
+    });
+  };
+
+  const removeChip = (index: number) => {
+    setSelections((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
     <div className="h-screen w-full overflow-hidden bg-black">
       <NavBar />
-      <div className="h-4/5 w-full max-w-[1440px] flex flex-col justify-start items-center gap-y-8 mt-12 mx-auto">
-        <div className="flex flex-row justify-center items-center flex-wrap gap-4 w-full max-w-[960px] mt-12">
-          {GenEdsTypes.map((type, index) => {
-            return (
-              <button
-                key={index}
-                className={`${genEdType === type.value ? "bg-gray-500" : "bg-gray-700"} hover:bg-gray-500 p-4 rounded-lg text-white`}
-                onClick={() => handleClickType(type.value)}
-              >
-                {type.label}
-              </button>
-            );
-          })}
+      <div className="h-4/5 w-full max-w-[1440px] flex flex-col justify-start items-center gap-y-4 mx-auto mt-6">
+        <div className="flex flex-row justify-center items-center flex-wrap gap-4 w-full max-w-[960px]">
+          {GenEdsTypes.map((type, index) => (
+            <button
+              key={index}
+              className={`${selectedType === type.value ? "bg-gray-500" : "bg-gray-700"} hover:bg-gray-500 p-4 rounded-lg text-white text-sm`}
+              onClick={() => handleClickType(type.value)}
+            >
+              {type.label}
+            </button>
+          ))}
         </div>
         <div className="flex flex-row justify-center items-center gap-x-4">
-          {GenEdsTypes.find((type) => type.value === genEdType)?.subtype.map(
-            (subtype, index) => {
-              return (
+          {selectedType &&
+            GenEdsTypes.find((t) => t.value === selectedType)?.subtype.map(
+              (subtype) => (
                 <button
-                  key={index}
-                  className={` ${genEdSubType === subtype.value ? "bg-gray-500" : "bg-gray-700"} hover:bg-gray-500 p-4 rounded-lg text-white`}
+                  key={subtype.value}
+                  className={`bg-gray-700 hover:bg-gray-500 p-4 rounded-lg text-white text-sm`}
                   onClick={() => handleClickSubType(subtype.value)}
                 >
                   {subtype.label}
                 </button>
-              );
-            },
-          )}
+              ),
+            )}
         </div>
-        <div className="w-full max-w-[980px] flex flex-col justify-center items-center gap-y-8">
+        <div className="flex flex-row justify-center items-center flex-wrap gap-4">
+          {selections.map((selection, index) => (
+            <div
+              key={index}
+              className="bg-blue-500 hover:bg-blue-400 p-4 rounded-lg text-white text-sm cursor-pointer"
+              onClick={() => removeChip(index)}
+            >
+              {selection.type}
+              {selection.subtype ? `/${selection.subtype}` : ""}
+            </div>
+          ))}
+        </div>
+        <div className="w-full max-w-[980px] flex-auto overflow-y-auto">
           <CourseTables courses={genEds} />
         </div>
       </div>

@@ -1,17 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Course, GenEdCourse } from "../utils/courseType";
-
-type FlexibleCourse = Course & Partial<GenEdCourse>;
+import { FlexibleCourse } from "../utils/courseType";
 
 type CourseTablesProps = {
   courses: FlexibleCourse[];
 };
 
+const genEdTypes = ["ACP", "CS", "HUM", "NAT", "QR", "SBS"];
+
 const CourseTables: React.FC<CourseTablesProps> = ({ courses }) => {
   const navigate = useNavigate();
-
-  const genEdTypes = ["ACP", "CS", "HUM", "NAT", "QR", "SBS"];
 
   // Helper function to get GenEd types and subtypes
   const getGenEdSubtypes = (course: FlexibleCourse) => {
@@ -30,7 +28,7 @@ const CourseTables: React.FC<CourseTablesProps> = ({ courses }) => {
   };
 
   return (
-    <div className="w-full max-w-[980px] flex flex-col justify-center items-center gap-y-8 my-8">
+    <div className="w-full max-w-[980px] flex flex-col justify-center items-center gap-y-8 my-8 overflow-y-auto">
       {courses.map((course, index) => {
         return (
           <button

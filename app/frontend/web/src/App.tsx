@@ -4,6 +4,7 @@ import HomePage from "./pages/Home";
 import GenEdsPage from "./pages/GenEds";
 import CoursePage from "./pages/Course";
 import SubjectsPage from "./pages/Subjects";
+import SubjectCoursePage from "./pages/SubjectCourse";
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
         <Route path="/gen-eds" element={<GenEdsPage />} />
         <Route path="/course" element={<CoursePage />} />
         <Route path="/subjects" element={<SubjectsPage />} />
+        <Route path="/subjects/:subjectName" element={<SubjectCoursePage />} />
       </Routes>
     </Router>
   );

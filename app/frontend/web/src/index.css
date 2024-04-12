@@ -70,3 +70,19 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+.chat-history::-webkit-scrollbar {
+  width: 12px; /* Scrollbar width */
+}
+
+.chat-history::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Track color */
+}
+
+.chat-history::-webkit-scrollbar-thumb {
+  background: #888; /* Handle color */
+}
+
+.chat-history::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Handle color on hover */
+}
