@@ -24,19 +24,26 @@ def index():
 
 
 ## all courses request
-## Right Now it will return the first 10 courses
 @app.route('/courses', methods=['GET'])
 def get_courses():
-    course_subject = request.args.get('course_subject', None)
-    
-    if course_subject:
-        # Use a case-insensitive search to find courses matching the course name
-        query = {"Subject": {"$regex": course_subject, "$options": "i"}}
-    else:
-        # No course name provided, no specific query
-        query = {}
+    """Find courses using subject, course_number."""
+    course_subject = request.args.get('subject', None)
+    course_number = request.args.get('course', None)
+    page = int(request.args.get('page', 1))  
+    per_page = int(request.args.get('per_page', 10))
 
-    courses_cursor = allCourses.find(query).limit(10)
+    # Building the MongoDB query
+    query = {}
+    if course_subject:
+        query["Subject"] = course_subject.upper()
+    if course_number:    
+        try:
+            query["Course"] = float(course_number)
+        except ValueError:
+            return jsonify({"error": "Course number must be a number."}), 400
+
+    
+    courses_cursor = allCourses.find(query).skip((page - 1) * per_page).limit(per_page)
     courses_list = list(courses_cursor)
     for course in courses_list:
         course['_id'] = str(course['_id'])
@@ -44,29 +51,57 @@ def get_courses():
 
 
 ## Geneds request
-## Right Now it will return the first 10 courses
-@app.route('/geneds', methods= ['GET'])
+@app.route('/geneds', methods=['GET'])
 def get_geneds():
-    gened_type = request.args.get('type', None) # Major type (e.g., ACP, CS)
-    gened_subtype = request.args.get('subtype', None)
+    """Find GenEds using subject, course_number."""
+    course_subject = request.args.get('subject', None)
+    course_number = request.args.get('course', None)
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 10))
 
-    if gened_type and gened_subtype:
-        # Filter by specific subtype value within the major type
-        query = {gened_type: gened_subtype}
-    elif gened_type:
-        # Filter by any non-empty value in the major type
-        query = {gened_type: {"$ne": ""}}
-    else:
-        # No filtering if no major type is specified
-        query = {}
+    # Building the MongoDB query
+    query = {}
+    if course_subject:
+        query["Subject"] = course_subject.upper()
+    if course_number:    
+        try:
+            query["Course"] = float(course_number)
+        except ValueError:
+            return jsonify({"error": "Course number must be a number."}), 400
 
-    courses_cursor = geneds.find(query).limit(10)
+    courses_cursor = geneds.find(query).skip((page - 1) * per_page).limit(per_page)
     courses_list = list(courses_cursor)
 
     for course in courses_list:
         course['_id'] = str(course['_id'])
     return jsonify(courses_list)
 
+@app.route('/geneds_by_category', methods=['GET'])
+def get_geneds_by_category():
+    """Find GenEds based on categories."""
+    acp = request.args.get('ACP', None)
+    cs = request.args.get('CS', None)  # US, NW, WCC
+    hum = request.args.get('HUM', None)  # LA, HP
+    nat = request.args.get('NAT', None)  # PS, LS
+    qr = request.args.get('QR', None)  # QR1, QR2
+    sbs = request.args.get('SBS', None)  # SS, BSC
+    page = max(int(request.args.get('page', 1)), 1)
+    per_page = max(int(request.args.get('per_page', 10)), 1)
+
+    query = {}
+    if acp: query['ACP'] = acp.upper()
+    if cs: query['CS'] = cs.upper()
+    if hum: query['HUM'] = hum.upper()
+    if nat: query['NAT'] = nat.upper()
+    if qr: query['QR'] = qr.upper()
+    if sbs: query['SBS'] = sbs.upper()
+
+    courses_cursor = geneds.find(query).skip((page - 1) * per_page).limit(per_page)
+    courses_list = list(courses_cursor)
+
+    for course in courses_list:
+        course['_id'] = str(course['_id'])
+    return jsonify(courses_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
