@@ -14,14 +14,15 @@ uri = "mongodb+srv://CSGROUP222:BAsSG1pOcss7KmN0@cluster222.vduea3l.mongodb.net/
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 db = client['Course_Data']  # Access the database
-allCourses = db['2020-2023'] # Access to all courses
+allCourses = db['2020-2023']  # Access to all courses
 geneds = db['geneds']   # Access to GenEds
 
-## Can't load the index page... waiting to be solved.
+# Can't load the index page... waiting to be solved.
+
+
 @app.route('/')
 def index():
-  return render_template("index.html")
-
+    return render_template("index.html")
 
 ## all courses request
 @app.route('/courses', methods=['GET'])
@@ -49,32 +50,42 @@ def get_courses():
         course['_id'] = str(course['_id'])
     return jsonify(courses_list)
 
+@app.route('/course/<subject>/<course_number>', methods=['GET'])
+def get_course(subject, course_number):
+    course_data = allCourses.find_one({"Subject": subject.upper(), "Course": int(course_number)})
+    if course_data:
+        # Convert MongoDB _id to string
+        course_data['_id'] = str(course_data['_id'])
+        return jsonify(course_data)
+    else:
+        return jsonify({"error": "Course not found"}), 404
 
-## Geneds request
-@app.route('/geneds', methods=['GET'])
+
+# Geneds request
+# Right Now it will return the first 10 courses
+@app.route('/geneds', methods=['POST'])
 def get_geneds():
-    """Find GenEds using subject, course_number."""
-    course_subject = request.args.get('subject', None)
-    course_number = request.args.get('course', None)
-    page = int(request.args.get('page', 1))
-    per_page = int(request.args.get('per_page', 10))
+    data = request.get_json()  # Get JSON payload from POST request
+    if not data:  # If the payload is empty, return all records
+        query = {}
+    else:
+        query_conditions = []
+        for gened_type, gened_subtype in data.items():
+            if gened_subtype == "all":
+                query_conditions.append({gened_type: {"$ne": ""}})
+            else:
+                query_conditions.append({gened_type: gened_subtype})
 
-    # Building the MongoDB query
-    query = {}
-    if course_subject:
-        query["Subject"] = course_subject.upper()
-    if course_number:    
-        try:
-            query["Course"] = float(course_number)
-        except ValueError:
-            return jsonify({"error": "Course number must be a number."}), 400
+        if query_conditions:
+            query = {"$and": query_conditions}
+        else:
+            query = {}
 
-    courses_cursor = geneds.find(query).skip((page - 1) * per_page).limit(per_page)
+    courses_cursor = geneds.find(query).limit(10)
     courses_list = list(courses_cursor)
 
     for course in courses_list:
         course['_id'] = str(course['_id'])
-    return jsonify(courses_list)
 
 @app.route('/geneds_by_category', methods=['GET'])
 def get_geneds_by_category():
@@ -103,8 +114,18 @@ def get_geneds_by_category():
         course['_id'] = str(course['_id'])
     return jsonify(courses_list)
 
+
+@app.route('/subjects/<subjectName>', methods=['GET'])
+def get_subject_records(subjectName):
+    # Query the database for records where the Subject field matches subjectName
+    query_result = allCourses.find({"Subject": subjectName})
+    # Convert query result to a list of dictionaries
+    records = list(query_result)
+    # Convert each MongoDB _id object to string for JSON serialization
+    for record in records:
+        record['_id'] = str(record['_id'])
+    return jsonify(records)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-

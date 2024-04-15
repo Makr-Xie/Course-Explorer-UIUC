@@ -15,3 +15,5 @@ export type GenEdCourse = Course & {
   QR: "QR1" | "QR2" | "";
   SBS: "LS" | "PS" | "";
 };
+
+export type FlexibleCourse = Course & Partial<GenEdCourse>;
