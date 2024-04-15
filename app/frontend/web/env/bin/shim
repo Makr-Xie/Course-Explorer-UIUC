@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+export NODE_PATH='/Users/calebyu/Documents/SPRING 2024/cs222/cs222REPO/group-project-team-19/app/frontend/web/env/lib/node_modules'
+export NPM_CONFIG_PREFIX='/Users/calebyu/Documents/SPRING 2024/cs222/cs222REPO/group-project-team-19/app/frontend/web/env'
+export npm_config_prefix='/Users/calebyu/Documents/SPRING 2024/cs222/cs222REPO/group-project-team-19/app/frontend/web/env'
+exec 'env/bin/node' "$@"
