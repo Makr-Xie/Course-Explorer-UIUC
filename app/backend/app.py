@@ -24,21 +24,27 @@ geneds = db['geneds']   # Access to GenEds
 def index():
     return render_template("index.html")
 
-
-# all courses request
-# Right Now it will return the first 10 courses
+## all courses request
 @app.route('/courses', methods=['GET'])
 def get_courses():
-    course_subject = request.args.get('course_subject', None)
+    """Find courses using subject, course_number."""
+    course_subject = request.args.get('subject', None)
+    course_number = request.args.get('course', None)
+    page = int(request.args.get('page', 1))  
+    per_page = int(request.args.get('per_page', 10))
 
+    # Building the MongoDB query
+    query = {}
     if course_subject:
-        # Use a case-insensitive search to find courses matching the course name
-        query = {"Subject": {"$regex": course_subject, "$options": "i"}}
-    else:
-        # No course name provided, no specific query
-        query = {}
+        query["Subject"] = course_subject.upper()
+    if course_number:    
+        try:
+            query["Course"] = float(course_number)
+        except ValueError:
+            return jsonify({"error": "Course number must be a number."}), 400
 
-    courses_cursor = allCourses.find(query).limit(10)
+    
+    courses_cursor = allCourses.find(query).skip((page - 1) * per_page).limit(per_page)
     courses_list = list(courses_cursor)
     for course in courses_list:
         course['_id'] = str(course['_id'])
@@ -81,6 +87,31 @@ def get_geneds():
     for course in courses_list:
         course['_id'] = str(course['_id'])
 
+@app.route('/geneds_by_category', methods=['GET'])
+def get_geneds_by_category():
+    """Find GenEds based on categories."""
+    acp = request.args.get('ACP', None)
+    cs = request.args.get('CS', None)  # US, NW, WCC
+    hum = request.args.get('HUM', None)  # LA, HP
+    nat = request.args.get('NAT', None)  # PS, LS
+    qr = request.args.get('QR', None)  # QR1, QR2
+    sbs = request.args.get('SBS', None)  # SS, BSC
+    page = max(int(request.args.get('page', 1)), 1)
+    per_page = max(int(request.args.get('per_page', 10)), 1)
+
+    query = {}
+    if acp: query['ACP'] = acp.upper()
+    if cs: query['CS'] = cs.upper()
+    if hum: query['HUM'] = hum.upper()
+    if nat: query['NAT'] = nat.upper()
+    if qr: query['QR'] = qr.upper()
+    if sbs: query['SBS'] = sbs.upper()
+
+    courses_cursor = geneds.find(query).skip((page - 1) * per_page).limit(per_page)
+    courses_list = list(courses_cursor)
+
+    for course in courses_list:
+        course['_id'] = str(course['_id'])
     return jsonify(courses_list)
 
 
