@@ -14,10 +14,17 @@ type Selection = {
   subtype?: string;
 };
 
-const constructPayload = (selections: Selection[]): Record<string, string> => {
-  const payload: Record<string, string> = {};
+const constructPayload = (
+  selections: Selection[],
+): { type: string; subtype: string }[] => {
+  const payload: { type: string; subtype: string }[] = [];
   selections.forEach((selection) => {
-    payload[selection.type] = selection.subtype || "all"; // Use "all" or "" if no subtype
+    // payload[selection.type] = selection.subtype || "all"; // Use "all" or "" if no subtype
+    if (selection.subtype) {
+      payload.push({ type: selection.type, subtype: selection.subtype });
+    } else {
+      payload.push({ type: selection.type, subtype: "all" });
+    }
   });
   return payload;
 };
@@ -81,7 +88,9 @@ const GenEdsPage: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            data: payload,
+          }),
         });
         const data = await response.json();
         console.log(data);

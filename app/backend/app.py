@@ -63,29 +63,35 @@ def get_course(subject, course_number):
 
 # Geneds request
 # Right Now it will return the first 10 courses
-@app.route('/geneds', methods=['POST'])
+@app.route('/geneds', methods= ['POST'])
 def get_geneds():
-    data = request.get_json()  # Get JSON payload from POST request
-    if not data:  # If the payload is empty, return all records
-        query = {}
-    else:
-        query_conditions = []
-        for gened_type, gened_subtype in data.items():
+    gened_queries = request.get_json().get('data', []) # Array of geneds: {type: string, subtype: string}
+    
+    query_conditions = []
+    
+    for gened in gened_queries:
+        gened_type = gened.get('type', None)
+        gened_subtype = gened.get('subtype', None)
+        
+        if gened_type:
             if gened_subtype == "all":
+                # Filter by any non-empty value in the major type
                 query_conditions.append({gened_type: {"$ne": ""}})
-            else:
+            elif gened_subtype:
+                # Filter by specific subtype value within the major type
                 query_conditions.append({gened_type: gened_subtype})
-
-        if query_conditions:
-            query = {"$and": query_conditions}
-        else:
-            query = {}
+    
+    if query_conditions:
+        query = {"$and": query_conditions}
+    else:
+        query = {}
 
     courses_cursor = geneds.find(query).limit(10)
     courses_list = list(courses_cursor)
 
     for course in courses_list:
         course['_id'] = str(course['_id'])
+    return jsonify(courses_list)
 
 @app.route('/geneds_by_category', methods=['GET'])
 def get_geneds_by_category():

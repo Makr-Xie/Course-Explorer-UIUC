@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
 
     const fetchCourseData = async (query: string) => {
       const res = await fetch(
-        import.meta.env.VITE_SERVER_LINK + `/courses?course_subject=${query}`,
+        import.meta.env.VITE_SERVER_LINK + `/courses/${query}`,
       );
       const data = await res.json();
       setCourses(data);
