@@ -5,6 +5,7 @@ from pymongo.server_api import ServerApi
 import pandas as pd
 from flask_cors import CORS
 import os
+import re
 
 
 app = Flask(__name__)
@@ -28,21 +29,27 @@ def index():
 @app.route('/courses', methods=['GET'])
 def get_courses():
     """Find courses using subject, course_number."""
-    course_subject = request.args.get('subject', None)
-    course_number = request.args.get('course', None)
+    course_input = request.args.get('course', '')
     page = int(request.args.get('page', 1))  
     per_page = int(request.args.get('per_page', 10))
+    print(course_input)
+    
+    match = re.match(r"([a-zA-Z]+)(\d+)", course_input)
+    if match:
+        course_subject = match.group(1)
+        try:
+            course_number = float(match.group(2))
+        except ValueError:
+            return jsonify({"error": "Course number must be a number."}), 400
+    else:
+        return jsonify({"error": "Invalid course format. Use format like 'CS101'."}), 400
 
     # Building the MongoDB query
     query = {}
     if course_subject:
         query["Subject"] = course_subject.upper()
-    if course_number:    
-        try:
-            query["Course"] = float(course_number)
-        except ValueError:
-            return jsonify({"error": "Course number must be a number."}), 400
-
+    if course_number:
+        query["Course"] = course_number
     
     courses_cursor = allCourses.find(query).skip((page - 1) * per_page).limit(per_page)
     courses_list = list(courses_cursor)
