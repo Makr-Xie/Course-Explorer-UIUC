@@ -66,9 +66,8 @@ const ProfessorsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProfessors = professors.filter((professor) =>
-    professor.name.toLowerCase().includes(searchQuery.toLowerCase())
+    professor.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
 
   const getRatingColor = (rating: number) => {
     if (rating < 2.5) {
@@ -85,7 +84,6 @@ const ProfessorsPage: React.FC = () => {
       <NavBar />
       <div className="h-4/5 w-full max-w-[1440px] flex flex-col justify-start items-center gap-y-4 mx-auto mt-6">
         <div className="w-full max-w-[980px] px-4">
-            
           <input
             type="text"
             placeholder="Search professor by name"
@@ -97,9 +95,14 @@ const ProfessorsPage: React.FC = () => {
         <div className="w-full max-w-[980px] flex-auto overflow-y-auto">
           <div className="space-y-6">
             {filteredProfessors.map((professor, index) => (
-              <div key={index} className="bg-gray-800 rounded-lg p-6 text-white">
+              <div
+                key={index}
+                className="bg-gray-800 rounded-lg p-6 text-white"
+              >
                 <h2 className="text-2xl font-bold mb-2">{professor.name}</h2>
-                <p className={`text-xl mb-4 ${getRatingColor(professor.rating)}`}>
+                <p
+                  className={`text-xl mb-4 ${getRatingColor(professor.rating)}`}
+                >
                   Professor Rating: {professor.rating.toFixed(1)}
                 </p>
                 <div className="space-y-4">
