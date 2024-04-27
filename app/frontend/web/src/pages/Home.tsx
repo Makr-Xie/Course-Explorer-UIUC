@@ -9,18 +9,22 @@ const HomePage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
 
   const submitSearch = () => {
-    console.log(search);
+    const match = search.match(/([a-zA-Z]+)\s*(\d+)/);
+    if (match) {
+      const subject = match[1];
+      const course = match[2];
+      fetchCourseData(subject, course);
+    } else {
+      console.error("Invalid course format");
+    }
+  };
 
-    const fetchCourseData = async (query: string) => {
-      const res = await fetch(
-        import.meta.env.VITE_SERVER_LINK + `/courses?course=${query}`,
-      );
-      const data = await res.json();
-      setCourses(data);
-    };
-    fetchCourseData(search);
-    // fetch(`/api/courses?query=${search}`)
-    // setCourses([]);
+  const fetchCourseData = async (subject: string, course: string) => {
+    const res = await fetch(
+      import.meta.env.VITE_SERVER_LINK + `/courses?subject=${subject}&course=${course}`,
+    );
+    const data = await res.json();
+    setCourses(data);
   };
 
   return (
